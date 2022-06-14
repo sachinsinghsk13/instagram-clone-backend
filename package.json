@@ -1,0 +1,38 @@
+{
+  "name": "instagram-clone-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sachinsinghsk13/instagram-clone-backend.git"
+  },
+  "keywords": [
+    "instagram"
+  ],
+  "author": "Sachin Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sachinsinghsk13/instagram-clone-backend/issues"
+  },
+  "homepage": "https://github.com/sachinsinghsk13/instagram-clone-backend#readme",
+  "devDependencies": {
+    "concurrently": "^7.2.1",
+    "nodemon": "^2.0.16",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "@types/dateformat": "^5.0.0",
+    "@types/express": "^4.17.13",
+    "@types/mongoose": "^5.11.97",
+    "dateformat": "^4.5.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.3.8",
+    "winston": "^3.7.2"
+  }
+}
