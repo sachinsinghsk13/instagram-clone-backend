@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "compile": "tsc --watch"
+    "start": "node -r dotenv/config dist/index.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q -r dotenv/config dist/index.js\"",
+    "compile": "tsc --watch",
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -22,21 +23,26 @@
   },
   "homepage": "https://github.com/sachinsinghsk13/instagram-clone-backend#readme",
   "devDependencies": {
+    "@types/ejs": "^3.1.1",
+    "@types/nodemailer": "^6.4.4",
     "concurrently": "^7.2.1",
+    "jasmine": "^4.2.0",
     "nodemon": "^2.0.16",
     "typescript": "^4.7.3"
   },
   "dependencies": {
     "@types/dateformat": "^5.0.0",
     "@types/express": "^4.17.13",
+    "@types/jasmine": "^4.0.3",
     "@types/mongoose": "^5.11.97",
     "dateformat": "^4.5.1",
     "dotenv": "^16.0.1",
+    "ejs": "^3.1.8",
     "express": "^4.18.1",
     "http-status-codes": "^2.2.0",
     "joi": "^17.6.0",
     "mongoose": "^6.3.8",
-    "node-mailer": "^0.1.1",
+    "nodemailer": "^6.7.5",
     "winston": "^3.7.2"
   }
 }
