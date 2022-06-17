@@ -13,6 +13,7 @@ export function createModuleLogger(moduleName: string) {
                 format: format.combine(
                     format.timestamp(),
                     format.label({ label: moduleName }),
+                    format.colorize(),
                     myFomatter,
                 )
             }),
@@ -23,10 +24,12 @@ export function createModuleLogger(moduleName: string) {
                     format.label({ label: moduleName }),
                     format.prettyPrint(),
                     format.splat(),
+                    format.colorize(),
                     format.simple(),
                     myFomatter
                 )
             })
-        ]
+        ],
+        
     });
 }
