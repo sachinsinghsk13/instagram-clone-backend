@@ -2,7 +2,7 @@ export interface RegistrationRequest {
     fullname: string;
     email: string;
     username: string;
-    provider: string;
+    provider: "FACEBOOK" | "GOOGLE" | "LOCAL";
 }
 
 export interface FacebookRegistrationRequest extends RegistrationRequest {
