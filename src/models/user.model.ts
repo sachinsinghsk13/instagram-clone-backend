@@ -6,7 +6,8 @@ export interface User {
     email: string;
     username: string;
     password: string;
-    createdAt: Date
+    createdAt: Date;
+    userId: string;
 }
 
 export const UserSchema = new Schema<User>({
@@ -14,7 +15,8 @@ export const UserSchema = new Schema<User>({
     lastname: String,
     email: String,
     username: String,
-    password: String
+    password: String,
+    userId: String
 });
 
 export const UserModel = model('User', UserSchema, 'users');

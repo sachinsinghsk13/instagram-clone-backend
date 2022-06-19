@@ -1,6 +1,4 @@
 import { Router } from "express";
-import { UserController } from "../controller/authentication.controller";
-import { UserControllerValidator } from "../controller/validators/authentication.controller.validator";
-
+import { AuthenticationController } from "../controller/authentication.controller";
 export const indexRouter = Router();
-indexRouter.post('/users/register', UserControllerValidator.registerUser, UserController.registerUser);
+indexRouter.post('/users/register', AuthenticationController.registerUser);

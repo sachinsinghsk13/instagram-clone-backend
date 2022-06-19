@@ -1,19 +1,13 @@
-import { Request, Response } from "express";
-import { User, UserModel } from "../models/user.model";
-import { RegistrationRequest } from "./api-models/authentication.api.model";
+import { NextFunction, Request, Response } from "express";
+import { AuthenticationService } from "../services/authentication.service";
+import { AppRegistrationRequest } from "./api-models/authentication.api.model";
 
-export class UserController {
-    static async registerUser(req: Request<any, any, RegistrationRequest>, res: Response) {
+export class AuthenticationController {
+    static async registerUser(req: Request<any, any, AppRegistrationRequest>, res: Response, next: NextFunction) {
         try {
-            const registrationRequest: RegistrationRequest = req.body;
-            switch (registrationRequest.provider) {
-                case 'LOCAL':
-                    break;
-                case 'FACEBOOK':
-                    break;
-            }
+            let response = await AuthenticationService.processUserRegistration(req.body);
         } catch (error: any) {
-            res.json({ message: error.message });
+            next(error);
         }
     }
 }

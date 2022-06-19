@@ -1,0 +1,1 @@
+export const FACEBOOK_TOKEN_VERIFY_URL = "https://graph.facebook.com/v14.0/";
