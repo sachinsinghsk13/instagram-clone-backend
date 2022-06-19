@@ -4,10 +4,10 @@ import { indexRouter } from './routes/index.route';
 import { createModuleLogger } from "./utils/logger";
 import path from 'path';
 import { connect, connection } from 'mongoose';
-import { GlobalExceptionHandler } from './exceptions/global-exception-handler.middleware';
+import { GlobalExceptionHandler } from './exceptions/global-exception-handler.middleware';;
+import { EmailService, testTransporter } from './services/email.service';
 import { InstagramCloneException } from './exceptions/instagram-clone.exception';
 import { StatusCodes } from 'http-status-codes';
-import { EmailService, testTransporter } from './services/email.service';
 // -----------------------
 dotenv.config();
 const logger = createModuleLogger('InstagramCloneApp');
@@ -27,6 +27,7 @@ app.use('/api', indexRouter);
 app.get('/test',(req:Request, res: Response, next: NextFunction) => {
     try {
         EmailService.sendTestMail();
+        throw new InstagramCloneException("sample exception", StatusCodes.NOT_FOUND, "34");
         res.json({message: 'Okay'});
     } catch (error) {
         next(error);

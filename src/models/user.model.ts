@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
 export interface User {
     firstname: string;
@@ -6,6 +6,7 @@ export interface User {
     email: string;
     username: string;
     password: string;
+    createdAt: Date
 }
 
 export const UserSchema = new Schema<User>({
