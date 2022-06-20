@@ -12,6 +12,7 @@ export interface RegistrationRequest {
 export interface FacebookLoginRequest extends RegistrationRequest {
     id: string;
     authToken: string;
+    name: string;
 }
 
 export interface LocalRegistrationRequest extends RegistrationRequest {
@@ -22,8 +23,10 @@ export interface LocalRegistrationResponse {
 
 }
 
-export interface SocialLoginSuccessResponse {
-
+export class SocialLoginSuccessResponse {
+    token: string;
+    provider: string;
+    name: string;
 }
 
 export interface SocialLoginFailResponse {
@@ -36,4 +39,5 @@ export interface FacebookUserVerifyResponse {
     email: string;
     first_name: string;
     last_name: string;
+    provider: string;
 }

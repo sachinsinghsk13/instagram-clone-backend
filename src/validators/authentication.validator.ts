@@ -19,3 +19,7 @@ export class UserControllerValidator {
         }
     }
 }
+
+export const facebookRequestValidator = joi.object({
+    authToken: joi.string().required()
+});
