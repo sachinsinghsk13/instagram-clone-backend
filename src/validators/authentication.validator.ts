@@ -23,3 +23,11 @@ export class UserControllerValidator {
 export const facebookRequestValidator = joi.object({
     authToken: joi.string().required()
 });
+
+export const localRegistrationRequestValidator = joi.object({
+    fullname: joi.string().required().min(4).max(20).alphanum(),
+    email: joi.string().required().email(),
+    username: joi.string().min(3).max(12).required(),
+    password: joi.string().required().min(4).max(8),
+    provider: joi.string().default("LOCAL"),
+});

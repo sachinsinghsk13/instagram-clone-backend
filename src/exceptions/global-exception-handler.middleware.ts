@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
@@ -26,5 +27,6 @@ export function GlobalExceptionHandler(error: any, req: Request, res: Response, 
 }
 
 const hanlders: Map<string, Function> = new Map();
-hanlders.set(InstagramCloneException.name, ExceptionHandlers.handleValidationException);
+hanlders.set(InstagramCloneException.name, ExceptionHandlers.handleInstagramCloneException);
 hanlders.set(Joi.ValidationError.name, ExceptionHandlers.handleValidationException);
+hanlders.set(AxiosError.name, ExceptionHandlers.handleAxiosException)
