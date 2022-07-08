@@ -25,6 +25,7 @@
   "devDependencies": {
     "@types/ejs": "^3.1.1",
     "@types/nodemailer": "^6.4.4",
+    "@types/uuid": "^8.3.4",
     "concurrently": "^7.2.1",
     "jasmine": "^4.2.0",
     "nodemon": "^2.0.16",
@@ -37,6 +38,7 @@
     "@types/express": "^4.17.13",
     "@types/jasmine": "^4.0.3",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/moment": "^2.13.0",
     "@types/mongoose": "^5.11.97",
     "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
@@ -47,8 +49,10 @@
     "http-status-codes": "^2.2.0",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.3",
     "mongoose": "^6.3.8",
     "nodemailer": "^6.7.5",
+    "uuid": "^8.3.2",
     "winston": "^3.7.2"
   }
 }

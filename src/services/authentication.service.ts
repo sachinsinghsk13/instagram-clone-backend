@@ -1,6 +1,6 @@
 import axios from "axios";
 import { AppRegistrationRequest, AppRegistrationResponse, FacebookLoginRequest, FacebookUserVerifyResponse, LocalRegistrationRequest, LocalRegistrationResponse, SocialLoginFailResponse, SocialLoginResponse, SocialLoginSuccessResponse } from "../controller/api-models/authentication.api.model";
-import { User, UserModel } from "../models/user.model";
+import { User, UserModel, UserRegistrationTokenModel } from "../models/user.model";
 import { FACEBOOK_TOKEN_VERIFY_URL } from "../utils/constants.util";
 import { createModuleLogger } from "../utils/logger";
 import { sign } from "jsonwebtoken";
@@ -9,6 +9,9 @@ import { facebookRequestValidator, localRegistrationRequestValidator } from "../
 import { MongooseError } from "mongoose";
 import { InstagramCloneException } from "../exceptions/instagram-clone.exception";
 import { StatusCodes } from "http-status-codes";
+import { v4 as uuid } from 'uuid'
+import moment from "moment";
+import { EmailService } from "./email.service";
 const logger = createModuleLogger('AuthenticationService');
 
 export class AuthenticationService {
@@ -71,11 +74,19 @@ export class AuthenticationService {
         localRegistrationRequestValidator.validate(request);
         let user: User;
         try {
+            // save user
             user = await UserModel.create(request);
+            // generate verification token
+            let token = await UserRegistrationTokenModel.create({
+                token: uuid(), // random uuid
+                username: user.username,
+                expiryDate: moment(Date.now()).add(1, 'week').toDate() // expire this token after one week
+            });
+            EmailService.sendRegistrationVerifyEmail(user, token);
         } catch (error: any) {
             if (error.code === 11000) {
                 throw new InstagramCloneException(generateDuplicateIdentityMessage(error), StatusCodes.OK, "Duplicate Identity");
-            }
+            } else throw error;
         }
         const response: BaseApiResponse<LocalRegistrationResponse> = {
             status: true,

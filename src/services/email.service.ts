@@ -3,6 +3,8 @@ import { createModuleLogger } from '../utils/logger';
 import { renderFile } from "ejs";
 import path from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { User, UserRegistrationToken } from '../models/user.model';
+import Mail from 'nodemailer/lib/mailer';
 const logger = createModuleLogger('EmailService');
 
 logger.debug(`Email: ${process.env.EMAIL_USER}`);
@@ -23,13 +25,30 @@ export class EmailService {
     static async sendTestMail() {
         try {
             const data = await renderFile(path.join(__dirname, '../templates/est.html'), { name: 'Sachin' });
-            var mainOptions = {
-                from: 'sachinsingh.sk13@gmail.com',
+            var mailOptions = {
+                from: process.env.SENT_FROM,
                 to: 'sachinsinghsk369@gmail.com',
                 subject: 'Account Activated',
                 html: data
             };
-            let messageInfo: SMTPTransport.SentMessageInfo = await transport.sendMail(mainOptions);
+            let messageInfo: SMTPTransport.SentMessageInfo = await transport.sendMail(mailOptions);
+            messageInfo.accepted.forEach((address: any) => logger.info(`Email Successfully Sent To : ${address}`));
+        } catch (error: any) {
+            logger.error(error.stack)
+        }
+    }
+
+    static async sendRegistrationVerifyEmail(user: User, token: UserRegistrationToken) {
+        try {
+            const data = await renderFile(path.join(__dirname, '../templates/verify-registration.html'), { user, token });
+            
+            var mailOptions: Mail.Options = {
+                from: process.env.SENT_FROM,
+                to: user.email,
+                subject: `Instagram Clone Email Verification`,
+                html: data
+            };
+            let messageInfo: SMTPTransport.SentMessageInfo = await transport.sendMail(mailOptions);
             messageInfo.accepted.forEach((address: any) => logger.info(`Email Successfully Sent To : ${address}`));
         } catch (error: any) {
             logger.error(error.stack)

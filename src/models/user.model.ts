@@ -26,4 +26,34 @@ export const UserSchema = new Schema<User>({
     status: { type: Number, required: true, default: UserStatus.NOT_ACTIVE }
 });
 
-export const UserModel = model('User', UserSchema, 'users');
+export const UserModel = model('User', UserSchema);
+
+export interface UserRegistrationToken {
+    token: string;
+    username: string;
+    expiryDate: Date;
+    createdAt: Date;
+}
+
+export const UserRegistrationTokenSchema = new Schema<UserRegistrationToken>({
+    token: {
+        type: String,
+        required: true
+    },
+    username: {
+        type: String,
+        required: true
+    },
+    expiryDate: {
+        type: Date,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
+});
+
+
+export const UserRegistrationTokenModel = model('UserRegistrationToken', UserRegistrationTokenSchema)
