@@ -51,3 +51,9 @@ export interface LoginRequest {
 export interface LoginResponse {
     accessToken?: string;
 }
+
+export interface AccessTokenJwtPayload {
+    username: string;
+    userId: string;
+    provider: string;
+}
