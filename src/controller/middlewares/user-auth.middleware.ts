@@ -10,7 +10,7 @@ export async function authenticationMiddleware(req: Request, res: Response, next
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         next(InstagramCloneException.create('Authorization header not present', StatusCodes.UNAUTHORIZED));
     }
-    let accessToken: string = authHeader.replace("Bearer", "");
+    let accessToken: string = authHeader.replace("Bearer ", "");
     try {
         let payload: AccessTokenJwtPayload = verify(accessToken, process.env.TOKEN_SECRET) as AccessTokenJwtPayload;
         let user = await UserModel.findOne({ username: payload.username }).lean().exec();
