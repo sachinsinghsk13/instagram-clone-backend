@@ -3,8 +3,9 @@ import { createModuleLogger } from '../utils/logger';
 import { renderFile } from "ejs";
 import path from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { User, UserRegistrationToken } from '../models/user.model';
+import { User } from '../models/user.model';
 import Mail from 'nodemailer/lib/mailer';
+import { IUserRegistrationToken } from '../models/user-registration-token.model';
 const logger = createModuleLogger('EmailService');
 
 logger.debug(`Email: ${process.env.EMAIL_USER}`);
@@ -38,7 +39,7 @@ export class EmailService {
         }
     }
 
-    static async sendRegistrationVerifyEmail(user: User, token: UserRegistrationToken) {
+    static async sendRegistrationVerifyEmail(user: User, token: IUserRegistrationToken) {
         try {
             const data = await renderFile(path.join(__dirname, '../templates/verify-registration.html'), { user, token });
             

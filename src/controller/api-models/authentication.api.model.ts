@@ -1,12 +1,12 @@
 export declare type AppRegistrationRequest = RegistrationRequest | FacebookLoginRequest | LocalRegistrationRequest;
 export declare type SocialLoginResponse = SocialLoginSuccessResponse | SocialLoginFailResponse;
 export declare type AppRegistrationResponse = LocalRegistrationResponse | SocialLoginResponse;
-
+export declare type LoginProviders = "FACEBOOK" | "GOOGLE" | "LOCAL";
 export interface RegistrationRequest {
     fullname: string;
     email: string;
     username: string;
-    provider: "FACEBOOK" | "GOOGLE" | "LOCAL";
+    provider: LoginProviders;
 }
 
 export interface FacebookLoginRequest extends RegistrationRequest {
@@ -40,4 +40,14 @@ export interface FacebookUserVerifyResponse {
     first_name: string;
     last_name: string;
     provider: string;
+}
+
+export interface LoginRequest {
+    provider: LoginProviders;
+    username: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    accessToken?: string;
 }

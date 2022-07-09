@@ -9,7 +9,7 @@ export class BaseApiResponse <T> {
         this.data = data;
     }
 
-    static  build<T>(message: string, status: boolean, data: T) {
+    static build<T>(message: string, status: boolean, data: T) {
         return new BaseApiResponse<T>(message, status, data);
     }
 }

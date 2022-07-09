@@ -1,20 +1,49 @@
 import axios from "axios";
-import { AppRegistrationRequest, AppRegistrationResponse, FacebookLoginRequest, FacebookUserVerifyResponse, LocalRegistrationRequest, LocalRegistrationResponse, SocialLoginFailResponse, SocialLoginResponse, SocialLoginSuccessResponse } from "../controller/api-models/authentication.api.model";
-import { User, UserModel, UserRegistrationTokenModel } from "../models/user.model";
+import { AppRegistrationRequest, AppRegistrationResponse, FacebookLoginRequest, FacebookUserVerifyResponse, LocalRegistrationRequest, LocalRegistrationResponse, LoginRequest, LoginResponse, SocialLoginFailResponse, SocialLoginResponse, SocialLoginSuccessResponse } from "../controller/api-models/authentication.api.model";
+import { User, UserModel, UserStatus } from "../models/user.model";
 import { FACEBOOK_TOKEN_VERIFY_URL } from "../utils/constants.util";
 import { createModuleLogger } from "../utils/logger";
 import { sign } from "jsonwebtoken";
 import { BaseApiResponse } from "../controller/api-models/common.api.model";
-import { facebookRequestValidator, localRegistrationRequestValidator } from "../validators/authentication.validator";
+import { facebookRequestValidator, localRegistrationRequestValidator, loginValidator } from "../validators/authentication.validator";
 import { MongooseError } from "mongoose";
 import { InstagramCloneException } from "../exceptions/instagram-clone.exception";
 import { StatusCodes } from "http-status-codes";
 import { v4 as uuid } from 'uuid'
 import moment from "moment";
 import { EmailService } from "./email.service";
+import { UserRegistrationTokenModel } from "../models/user-registration-token.model";
+import { hash, genSaltSync, compare, compareSync } from 'bcryptjs';
+import { generateAccessToken } from "../utils/jwt.util";
 const logger = createModuleLogger('AuthenticationService');
 
 export class AuthenticationService {
+
+    public static async login(loginRequest: LoginRequest): Promise<BaseApiResponse<LoginResponse>> {
+        switch (loginRequest.provider) {
+            case "FACEBOOK":
+                //AuthenticationService.processFacebookLogin(loginRequest);
+                break;
+
+            default:
+                return AuthenticationService.localLogin(loginRequest);
+        }
+    }
+
+    private static async localLogin(loginRequest: LoginRequest): Promise<BaseApiResponse<LoginResponse>> {
+        loginValidator.validate(loginRequest);
+        let user = await UserModel.findOne({ username: loginRequest.username }).lean().exec()
+        if (!user || !compareSync(loginRequest.password, user.password)) {
+            return Promise.reject(InstagramCloneException.create(`Incorrect username or password`, StatusCodes.OK));
+        }
+        let accessToken = generateAccessToken({
+            provider: loginRequest.provider,
+            username: loginRequest.username
+        });
+        let response = BaseApiResponse.build<LoginResponse>('Login Successfull!', true, { accessToken });
+        return Promise<BaseApiResponse<LoginResponse>>.resolve(response);
+    }
+
     public static async processUserRegistration(request: AppRegistrationRequest): Promise<AppRegistrationResponse> {
         switch (request.provider) {
             case 'FACEBOOK':
@@ -22,7 +51,6 @@ export class AuthenticationService {
             default:
                 return AuthenticationService.processLocalRegistration(request as LocalRegistrationRequest)
         }
-        return null;
     }
 
     private static async processFacebookLogin(request: FacebookLoginRequest): Promise<SocialLoginResponse> {
@@ -56,11 +84,7 @@ export class AuthenticationService {
             provider,
             userId
         };
-        const token = sign(jwtTokenPayload, process.env.TOKEN_SECRET, {
-            algorithm: "HS256",
-            expiresIn: process.env.TOKEN_EXPIRY,
-            issuer: 'InstagramClone'
-        });
+        let token = generateAccessToken(jwtTokenPayload);
         let response: BaseApiResponse<SocialLoginSuccessResponse> = {
             message: `${isNewRegistration ? 'Registration Successfull!' : 'Login Successfull'}`,
             status: true,
@@ -70,10 +94,12 @@ export class AuthenticationService {
 
     }
 
-    private static async processLocalRegistration(request: LocalRegistrationRequest): Promise<LocalRegistrationResponse> {
+    private static async processLocalRegistration(request: LocalRegistrationRequest): Promise<BaseApiResponse<LocalRegistrationResponse>> {
         localRegistrationRequestValidator.validate(request);
         let user: User;
         try {
+            // encrypt password
+            request.password = await hash(request.password, genSaltSync(10));
             // save user
             user = await UserModel.create(request);
             // generate verification token
@@ -93,6 +119,25 @@ export class AuthenticationService {
             message: `Hi ${request.fullname}, We've received your request for registration. Please confirm your email to activate your account`
         };
         return Promise<BaseApiResponse<LocalRegistrationResponse>>.resolve(response);
+    }
+
+    public static async verifyUser(token: string): Promise<BaseApiResponse<any>> {
+        let userRegistrtionToken = await UserRegistrationTokenModel.findOne({ token });
+        if (!userRegistrtionToken) {
+            return Promise<BaseApiResponse<any>>.reject(
+                InstagramCloneException.create('Verification token is not valid', StatusCodes.OK)
+            );
+        }
+
+        let user = await UserModel.findOne({ username: userRegistrtionToken.username }).exec();
+        user.status = UserStatus.ACTIVE;
+        await user.save();
+        await userRegistrtionToken.remove();
+
+        return Promise<BaseApiResponse<any>>.resolve({
+            status: true,
+            message: `Hi ${user.fullname}, Your email is verified and account activated`
+        });
     }
 }
 

@@ -31,3 +31,9 @@ export const localRegistrationRequestValidator = joi.object({
     password: joi.string().required().min(4).max(8),
     provider: joi.string().default("LOCAL"),
 });
+
+export const loginValidator = joi.object({
+    provider: joi.string().required(),
+    username: joi.string().required(),
+    password: joi.string().required()
+});

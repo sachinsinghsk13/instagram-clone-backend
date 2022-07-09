@@ -1,10 +1,11 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Model, Types } from "mongoose";
 
 export enum UserStatus {
     NOT_ACTIVE, ACTIVE, SUSPENDED, TEMP_BLOCKED
 }
 
 export interface User {
+    _id: Types.ObjectId;
     fullname: string
     email: string;
     username: string;
@@ -28,32 +29,9 @@ export const UserSchema = new Schema<User>({
 
 export const UserModel = model('User', UserSchema);
 
-export interface UserRegistrationToken {
-    token: string;
-    username: string;
-    expiryDate: Date;
-    createdAt: Date;
-}
-
-export const UserRegistrationTokenSchema = new Schema<UserRegistrationToken>({
-    token: {
-        type: String,
-        required: true
-    },
-    username: {
-        type: String,
-        required: true
-    },
-    expiryDate: {
-        type: Date,
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now()
-    }
-});
 
 
-export const UserRegistrationTokenModel = model('UserRegistrationToken', UserRegistrationTokenSchema)
+
+
+
+
